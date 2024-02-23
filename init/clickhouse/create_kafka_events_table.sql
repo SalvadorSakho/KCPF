@@ -1,6 +1,6 @@
 CREATE TABLE if not exists default.kafka_events
 (
-    event_ts  DateTime,
+    event_ts  Int32,
     user_id   Int32,
     operation String,
     status    Bool
