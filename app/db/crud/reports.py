@@ -4,7 +4,7 @@ import traceback
 
 from sqlalchemy.exc import TimeoutError, StatementError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, cast, func, Date
+from sqlalchemy import select, and_, func
 
 from schemas.events import Events
 from utils.project_logger import logger as log
@@ -13,12 +13,12 @@ from utils.project_logger import logger as log
 async def select_report_data(star_date: date, end_date: date, session: AsyncSession) -> List[dict]:
     result_set = None
     query = select(
-        cast(Events.event_ts, Date), func.count(Events.event_ts).label('qty')
+        Events.events_date, func.count(Events.event_ts).label('qty')
     ).group_by(
-        cast(Events.event_ts, Date)
+        Events.events_date
     ).where(and_(
-        Events.event_ts > star_date,
-        Events.event_ts <= end_date
+        Events.events_date > star_date,
+        Events.events_date <= end_date
     ))
     try:
         result_set = await session.execute(query)

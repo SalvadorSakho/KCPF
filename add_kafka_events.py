@@ -27,7 +27,6 @@ def random_datetime(start, end):
     return start + timedelta(seconds=random_second)
 
 
-# every 2 seconds, adding event to topic 'event'
 @app.timer(interval=0.5)
 async def example_sender(app):
     operation_type = ['like', 'dislike', 'kiss', 'surprised', 'dissatisfied'][randint(0, 4)]
@@ -39,6 +38,7 @@ async def example_sender(app):
         operation=operation_type,
         status=[True, False][randint(0, 1)]
     )
+    print(f'{event}')
     await events_topic.send(key=str(kafka_event_ts), value=event)
 
 
