@@ -1,3 +1,5 @@
+import os
+
 import faust
 from faust import Record
 from random import randint, randrange
@@ -27,20 +29,24 @@ def random_datetime(start, end):
     return start + timedelta(seconds=random_second)
 
 
-@app.timer(interval=0.5)
+@app.task
 async def example_sender(app):
-    operation_type = ['like', 'dislike', 'kiss', 'surprised', 'dissatisfied'][randint(0, 4)]
-    random_dt = random_datetime(datetime(2023, 1, 1), datetime(2024, 2, 28))
-    kafka_event_ts = int(random_dt.timestamp())
-    event = Event(
-        event_ts=kafka_event_ts,
-        user_id=randint(1, 200),
-        operation=operation_type,
-        status=[True, False][randint(0, 1)]
-    )
-    print(f'{event}')
-    await events_topic.send(key=str(kafka_event_ts), value=event)
-
+    msg_qty = 1000
+    while msg_qty > 0:
+        operation_type = ['like', 'dislike', 'kiss', 'surprised', 'dissatisfied'][randint(0, 4)]
+        random_dt = random_datetime(datetime(2023, 1, 1), datetime(2024, 2, 28))
+        kafka_event_ts = int(random_dt.timestamp())
+        event = Event(
+            event_ts=kafka_event_ts,
+            user_id=randint(1, 200),
+            operation=operation_type,
+            status=[True, False][randint(0, 1)]
+        )
+        print(f'{event}')
+        await events_topic.send(key=str(kafka_event_ts), value=event)
+        msg_qty -= 1
+    print('Finished to generate kafka data')
+    os._exit(1)
 
 if __name__ == '__main__':
     app.main()
