@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 from apis.v1.reports_endpoints import reports_routers
 
-app = FastAPI(title='KCPF')
+app = FastAPI(title='KCPF', description='Service for visualizing clickhouse data')
 app.include_router(reports_routers)
 
 
