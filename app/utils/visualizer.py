@@ -2,22 +2,22 @@ import io
 
 import matplotlib.pyplot as plt
 import matplotlib
-
 matplotlib.use('AGG')
 
 
-def visualise(data: list, x_label: str, y_label: str, title: str):
+def visualise(data: list, x_label: str, y_label: str, title: str, x_axes_values: str, y_axes_values: str):
 
-    event_ts_list = [data.get('events_date') for data in data]
-    qty_list = [data.get('qty') for data in data]
+    x_axes = [data.get(x_axes_values).strftime("%Y-%m-%d %H:%M") for data in data]
+    y_axes = [data.get(y_axes_values) for data in data]
     plt.rcParams['figure.figsize'] = [20, 10]
     plt.rcParams['figure.autolayout'] = True
 
-    plt.bar(event_ts_list, qty_list, width=0.4)
+    plt.bar(x_axes, y_axes, width=0.4)
 
     img_buf = io.BytesIO()
 
-    plt.xticks(rotation=90)
+    plt.gcf().autofmt_xdate()
+    plt.xticks(rotation=70)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
