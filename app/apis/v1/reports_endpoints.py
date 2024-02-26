@@ -16,8 +16,7 @@ reports_routers = APIRouter(prefix="/v1/reports")
 class QueryParams:
     def __init__(self,
                  report_date: date = Query(example='2023-02-01'),
-                 # users have to select a data range that is suitable for OLAP solutions.
-                 days_qty: int = Query(ge=90, le=365, description='quantity of day before report_date')
+                 days_qty: int = Query(ge=30, le=90, description='quantity of day for which data will be taken')
                  ) -> None:
         self.report_date = report_date
         self.days_qty = days_qty
@@ -25,9 +24,9 @@ class QueryParams:
 
 @reports_routers.get('/get_daily_events_report', response_class=HTMLResponse,
                      description="**Events quantity per day**.<br>"
-                                 "Report periods: 90 - 365 days.<br>"
-                                 "End report date = report_date parameter.<br>"
-                                 "start report date = report_date - days_qty")
+                                 "Report periods: 30 - 90 days.<br>"
+                                 "Start report date = report_date - days_qty"
+                                 "End report date = report_date parameter.<br>")
 async def get_report(qp: QueryParams = Depends(), ch_session: AsyncSession = Depends(get_cursor)):
     start_date = qp.report_date - timedelta(days=qp.days_qty)
     end_date = qp.report_date
@@ -38,10 +37,10 @@ async def get_report(qp: QueryParams = Depends(), ch_session: AsyncSession = Dep
 
 
 @reports_routers.get('/get_daily_events_report_12_hour_groups', response_class=HTMLResponse,
-                     description="**Events quantity per day, grouped by every 12 hours**.<br>"
-                                 "Report periods: 90 - 365 days.<br>"
-                                 "End report date = report_date parameter.<br>"
-                                 "start report date = report_date - days_qty")
+                     description="**Events quantity per day, grouped by 12 hours**.<br>"
+                                 "Report periods: 30 - 90 days.<br>"
+                                 "Start report date = report_date - days_qty"
+                                 "End report date = report_date parameter.<br>")
 async def get_report(qp: QueryParams = Depends(), ch_session: AsyncSession = Depends(get_cursor)):
     start_date = qp.report_date - timedelta(days=qp.days_qty)
     end_date = qp.report_date
